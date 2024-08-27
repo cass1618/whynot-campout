@@ -1,7 +1,7 @@
 <template>
-  <HelloWorld />
+  <Survey />
 </template>
 
 <script setup>
-  //
+//
 </script>
