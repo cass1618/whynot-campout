@@ -8,10 +8,24 @@
 import { createRouter, createWebHistory } from 'vue-router/auto'
 import { setupLayouts } from 'virtual:generated-layouts'
 import { routes } from 'vue-router/auto-routes'
+import Index from '@/pages/index.vue' // Adjust the path if necessary
+import PostCampoutSurvey from '@/pages/PostCampoutSurvey.vue' // Adjust the path if necessary
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: setupLayouts(routes),
+  routes: setupLayouts([
+    ...routes,
+    {
+      path: '/',
+      name: 'index',
+      component: Index,
+    },
+    {
+      path: '/post-campout-survey',
+      name: 'PostCampoutSurvey',
+      component: PostCampoutSurvey,
+    },
+  ]),
 })
 
 // Workaround for https://github.com/vitejs/vite/issues/11804

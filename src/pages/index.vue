@@ -1,14 +1,20 @@
 <template>
-  <Suspense>
-    <template #default>
-      <Survey />
-    </template>
-    <template #fallback> Loading... </template>
-  </Suspense>
+  <v-container>
+    <v-responsive>
+      <img
+        src="@/assets/header.png"
+        alt="WHYNOT CAMPOUT BANNER"
+        class="header"
+      />
+    </v-responsive>
+  </v-container>
 </template>
 
-<script setup>
-import { defineAsyncComponent } from "vue";
+<script setup></script>
 
-const Survey = defineAsyncComponent(() => import("../components/Survey.vue"));
-</script>
+<style scoped>
+img {
+  width: 100%;
+  height: auto;
+}
+</style>
