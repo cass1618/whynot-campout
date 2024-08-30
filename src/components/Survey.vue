@@ -1,6 +1,6 @@
 <template>
   <v-container class="fill-height">
-    <v-responsive class="align-centerfill-height mx-auto" max-width="900">
+    <v-responsive class="align-centerfill-height mx-auto">
       <v-img class="mb-4" height="150" src="@/assets/logo.png" />
 
       <div class="text-center">
@@ -11,29 +11,121 @@
 
       <div class="py-4" />
 
-      <v-form @submit.prevent="submit">
+      <v-card class="mb-4">
+        <v-card-subtitle>
+          Thank you for attending the 2024 WHYNOT Campout! We want next year's
+          campout to be bigger and better and we could really use your help to
+          make that happen. Please take a few minutes to fill out this survey to
+          help us understand what we did well and what we can do better. Upon
+          completion of this survey, you will be eligible for a special
+          discounted presale on WHYNOT's next ticket event as well as next
+          year's campout! Note: we will need to verify that you attended in
+          order for you to be eligible.
+        </v-card-subtitle>
+      </v-card>
+      <v-form v-if="!formSuccessfullySubmitted" @submit.prevent="submit">
         <v-card class="mb-4">
           <v-card-text>
+            <v-row>
+              <v-col cols="12" md="4">
+                <v-text-field
+                  v-model="firstname.value.value"
+                  :counter="10"
+                  :error-messages="firstname.errorMessage.value"
+                  @blur="validateField('firstname')"
+                  label="First Name"
+                >
+                </v-text-field>
+              </v-col>
+              <v-col cols="12" md="4">
+                <v-text-field
+                  v-model="lastname.value.value"
+                  :counter="10"
+                  :error-messages="lastname.errorMessage.value"
+                  @blur="validateField('lastname')"
+                  label="Last Name"
+                >
+                </v-text-field>
+              </v-col>
+              <v-col cols="12" md="4">
+                <v-text-field
+                  v-model="email.value.value"
+                  :error-messages="email.errorMessage.value"
+                  @blur="validateField('email')"
+                  label="E-mail"
+                >
+                </v-text-field>
+              </v-col>
+            </v-row>
+          </v-card-text>
+        </v-card>
+        <v-card class="mb-4">
+          <v-card-title
+            >Overall, how would you rate this year's campout?
+          </v-card-title>
+          <v-card-text>
+            <v-rating
+              v-model="overallRating.value.value"
+              hover
+              :length="10"
+              :size="52"
+              active-color="primary"
+              empty-icon="mdi-heart-outline"
+              half-icon="mdi-heart-half-full"
+              full-icon="mdi-heart"
+            />
+          </v-card-text>
+        </v-card>
+        <v-card class="mb-4">
+          <v-card-title> What did you like most about this year's campout?
+          </v-card-title>
+          <v-card-text>
             <v-text-field
-              v-model="firstname.value.value"
-              :counter="10"
-              :error-messages="firstname.errorMessage.value"
-              @blur="validateField('firstname')"
-              label="First Name"
-            ></v-text-field>
+                  v-model="likeMost.value.value"
+                  :error-messages="likeMost.errorMessage.value"
+                  @blur="validateField('likeMost')"
+                >
+                </v-text-field>
+          </v-card-text>
+        </v-card>
+        <v-card class="mb-4">
+          <v-card-title> What did you like least about this year's campout?
+          </v-card-title>
+          <v-card-text>
             <v-text-field
-              v-model="lastname.value.value"
-              :counter="10"
-              :error-messages="lastname.errorMessage.value"
-              @blur="validateField('lastname')"
-              label="Last Name"
-            ></v-text-field>
-            <v-text-field
-              v-model="email.value.value"
-              :error-messages="email.errorMessage.value"
-              @blur="validateField('email')"
-              label="E-mail"
-            ></v-text-field>
+                  v-model="likeLeast.value.value"
+                  :error-messages="likeLeast.errorMessage.value"
+                  @blur="validateField('likeLeast')"
+                >
+                </v-text-field>
+          </v-card-text>
+        </v-card>
+        <v-card class="mb-4">
+          <v-card-title>How likely are you to attend next year's campout?
+          </v-card-title>
+          <v-card-text>
+            <v-rating
+              v-model="likelyToAttend.value.value"
+              hover
+              :length="10"
+              :size="52"
+              active-color="primary"
+              empty-icon="mdi-heart-outline"
+              half-icon="mdi-heart-half-full"
+              full-icon="mdi-heart"
+            />
+          </v-card-text>
+        </v-card>
+        <v-card class="mb-4">
+          <v-card-title
+          </v-card-title>
+          <v-card-text>
+          </v-card-text>
+        </v-card>
+        <v-card class="mb-4">
+          <v-card-title
+          </v-card-title>
+          <v-card-text>
           </v-card-text>
         </v-card>
         <v-card class="mb-4">
@@ -76,6 +168,18 @@
 
         <v-btn @click="handleReset"> clear </v-btn>
       </v-form>
+      
+      <v-card v-else>
+        <v-card-title>Thank you for your submission! We will be reaching out to you about
+          the presale when we schedule our next event!
+        </v-card-title>
+      </v-card>
+      <v-snackbar
+      v-model="errorbar"
+      :timeout="6000"
+    >
+      Please correct the errors in the form before submitting.
+    </v-snackbar>
     </v-responsive>
   </v-container>
 </template>
@@ -88,6 +192,9 @@ import RankedCheckboxes from "./RankedCheckboxes";
 
 const db = useFirestore();
 const formSubmitted = ref(false);
+const errorMessage = ref("");
+const formSuccessfullySubmitted = ref(false);
+const errorbar = ref(false);
 
 const { handleSubmit, handleReset, validateField, errors } = useForm({
   validationSchema: {
@@ -102,9 +209,20 @@ const { handleSubmit, handleReset, validateField, errors } = useForm({
       return "Name needs to be at least 2 characters.";
     },
     email(value) {
-      if (/^[a-z0-9.-]+@[a-z0-9.-]+\.[a-z]{2,}$/i.test(value)) return true;
+      return true;
+      // if (/^[a-z0-9.-]+@[a-z0-9.-]+\.[a-z]{2,}$/i.test(value)) return true;
 
-      return "Must be a valid e-mail.";
+      // return "Must be a valid e-mail.";
+    },
+    likeMost(value) {
+      if (value?.length >= 2) return true;
+
+      return "LIKE MOST ERROR.";
+    },
+    likeLeast(value) {
+      if (value?.length >= 2) return true;
+
+      return "LIKE LEAST ERROR.";
     },
     selectedAmenities(value) {
       if (countSelectedAmenities.value > 0) return true;
@@ -133,6 +251,10 @@ const availableAmenities = [
 const firstname = useField("firstname");
 const lastname = useField("lastname");
 const email = useField("email");
+const overallRating = useField("overallRating");
+const likeMost = useField("likeMost");
+const likeLeast = useField("likeLeast");
+const likelyToAttend = useField("likelyToAttend");
 const selectedAmenities = ref(
   availableAmenities.map(() => ({ checked: false, order: 0 }))
 );
@@ -196,9 +318,13 @@ const getDocId = async (docName) => {
 };
 
 // handle submit button click
-const attemptSubmit = (event) => {
+const attemptSubmit = async (event) => {
   formSubmitted.value = true;
-  submit(event);
+  const isValid = await submit(event);
+  if (!isValid) {
+    errorbar.value = true;
+    errorMessage.value = "Please correct the errors in the form before submitting.";
+  }
 };
 
 const submit = handleSubmit(async (values) => {
@@ -210,6 +336,8 @@ const submit = handleSubmit(async (values) => {
       values.firstname.toLowerCase() + "-" + values.lastname.toLowerCase()
     );
     await setDoc(doc(collection(db, "SurveyData"), docId), values);
+    formSuccessfullySubmitted.value = true;
+    return true;
   } catch (error) {
     console.error("Error adding document: ", error);
   }
