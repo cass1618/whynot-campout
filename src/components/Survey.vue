@@ -4,9 +4,9 @@
       <v-img class="mb-4" height="150" src="@/assets/logo.png" />
 
       <div class="text-center">
-        <div class="text-body-2 font-weight-light mb-n1">WHYNOT Campout</div>
+        <div><h2>WHYNOT Campout 2024</h2></div>
 
-        <h1 class="text-h2 font-weight-bold">Post Campout Survey</h1>
+        <h1>Post Campout Survey</h1>
       </div>
 
       <div class="py-4" />
@@ -69,7 +69,7 @@
               hover
               :length="10"
               :size="52"
-              active-color="primary"
+              active-color="#FAA0DB"
               empty-icon="mdi-heart-outline"
               half-icon="mdi-heart-half-full"
               full-icon="mdi-heart"
@@ -109,7 +109,23 @@
               hover
               :length="10"
               :size="52"
-              active-color="primary"
+              active-color="#FAA0DB"
+              empty-icon="mdi-heart-outline"
+              half-icon="mdi-heart-half-full"
+              full-icon="mdi-heart"
+            />
+          </v-card-text>
+        </v-card>
+        <v-card class="mb-4">
+          <v-card-title>How likely are you to invite additional friends to next year's campout?
+          </v-card-title>
+          <v-card-text>
+            <v-rating
+              v-model="likelyToReccomend.value.value"
+              hover
+              :length="10"
+              :size="52"
+              active-color="#FAA0DB"
               empty-icon="mdi-heart-outline"
               half-icon="mdi-heart-half-full"
               full-icon="mdi-heart"
@@ -162,11 +178,11 @@
           </v-card-text>
         </v-card>
 
-        <v-btn class="me-4" type="submit" @click="attemptSubmit()">
+        <v-btn class="me-4" size="large" block type="submit" @click="attemptSubmit()" :ripple="true">
           submit
         </v-btn>
 
-        <v-btn @click="handleReset"> clear </v-btn>
+        <!-- <v-btn @click="handleReset"> clear </v-btn> -->
       </v-form>
       
       <v-card v-else>
@@ -209,10 +225,14 @@ const { handleSubmit, handleReset, validateField, errors } = useForm({
       return "Name needs to be at least 2 characters.";
     },
     email(value) {
-      return true;
-      // if (/^[a-z0-9.-]+@[a-z0-9.-]+\.[a-z]{2,}$/i.test(value)) return true;
+      if (/^[a-z0-9.-]+@[a-z0-9.-]+\.[a-z]{2,}$/i.test(value)) return true;
 
-      // return "Must be a valid e-mail.";
+      return "Must be a valid e-mail.";
+    },
+    overallRating(value) {
+      if (value > 0) return true;
+
+      return "Please select a rating.";
     },
     likeMost(value) {
       if (value?.length >= 2) return true;
@@ -223,6 +243,16 @@ const { handleSubmit, handleReset, validateField, errors } = useForm({
       if (value?.length >= 2) return true;
 
       return "LIKE LEAST ERROR.";
+    },
+    likelyToAttend(value) {
+      if (value > 0) return true;
+
+      return "Please select a rating.";
+    },
+    likelyToReccomend(value) {
+      if (value > 0) return true;
+
+      return "Please select a rating.";
     },
     selectedAmenities(value) {
       if (countSelectedAmenities.value > 0) return true;
@@ -255,6 +285,7 @@ const overallRating = useField("overallRating");
 const likeMost = useField("likeMost");
 const likeLeast = useField("likeLeast");
 const likelyToAttend = useField("likelyToAttend");
+const likelyToReccomend = useField("likelyToReccomend");
 const selectedAmenities = ref(
   availableAmenities.map(() => ({ checked: false, order: 0 }))
 );
@@ -349,5 +380,35 @@ const submit = handleSubmit(async (values) => {
 .v-card-subtitle {
   white-space: normal;
   hyphens: none;
+}
+
+.v-card-title {
+  font-family: 'Happy Monkey', system-ui;
+  color: #00c2fa;
+  font-weight: bold;
+}
+
+.v-card-subtitle {
+  font-family: 'Happy Monkey', system-ui;
+  color: #faa0db;
+}
+
+.v-card {
+  border-radius: 16px;
+}
+
+.v-btn {
+  font-family: 'Happy Monkey', system-ui;
+  font-size: xx-large;
+}
+
+h1 {
+  font-family: 'Happy Monkey', system-ui;
+  color: #00c2fa;
+}
+
+h2 {
+  font-family: 'Happy Monkey', system-ui;
+  color: #faa0db;
 }
 </style>
