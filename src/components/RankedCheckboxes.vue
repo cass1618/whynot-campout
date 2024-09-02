@@ -5,6 +5,7 @@
     :error-messages="errorMessages"
     @click="toggle"
     @onToggle="toggle"
+    theme="dark"
   >
     <template v-slot:default>
       <div class="checkbox-container">
@@ -12,7 +13,7 @@
           <v-icon v-if="modelValue">{{ getIcon }}</v-icon>
           <v-icon v-else>mdi-checkbox-blank-outline</v-icon>
         </div>
-        <div class="checkbox-label">
+        <div class="checkbox-label" theme="dark">
           <slot></slot>
         </div>
       </div>
@@ -72,6 +73,7 @@ const getIcon = computed(() => {
   display: flex;
   align-items: center;
   cursor: pointer;
+  opacity: 0.9;
 }
 
 .checkbox-container {
